@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Private Vault</title>
+    <title>Admin Private Vault (GitHub Edition)</title>
     
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -15,46 +15,18 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Dropbox SDK -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropbox.js/10.34.0/Dropbox-sdk.min.js"></script>
-    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        body {
-            background-color: #09090b;
-            color: #e4e4e7;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden; 
-        }
-        
+        body { background-color: #09090b; color: #e4e4e7; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #18181b; }
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
-
-        .loader {
-            border: 3px solid #27272a;
-            border-top: 3px solid #ef4444;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
+        .loader { border: 3px solid #27272a; border-top: 3px solid #ef4444; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .input-dark {
-            background-color: #18181b;
-            border: 1px solid #27272a;
-            color: white;
-            transition: all 0.2s;
-        }
-        .input-dark:focus {
-            border-color: #ef4444;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
-        }
+        .input-dark { background-color: #18181b; border: 1px solid #27272a; color: white; transition: all 0.2s; }
+        .input-dark:focus { border-color: #ef4444; outline: none; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); }
     </style>
 </head>
 <body>
@@ -62,84 +34,81 @@
 
     <script type="text/babel">
         // ==========================================
-        // CẤU HÌNH HỆ THỐNG (DÁN TOKEN CỦA BẠN VÀO ĐÂY)
+        // CẤU HÌNH HỆ THỐNG
         // ==========================================
         const CONFIG = {
-            // Access Token từ Dropbox Developer Console
+            // Xem file "github_setup_guide.md" để lấy 3 thông tin này
+            GITHUB_USERNAME: 'trantrungthangdev', // Tên người dùng GitHub của bạn
+            GITHUB_REPO: 'demo2',     // Tên kho chứa (repository) riêng tư bạn tạo
+            GITHUB_TOKEN: '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',               // Personal Access Token (PAT) không hết hạn
             
-            ACCESS_TOKEN: 'sl.u.AGFP-B0f_H6BRm7HNHI3sGvxmxeDsss1-vVRKDZpZwBtCMS_5A8dh7puT5_CdGHVPa32AEPy_kPBOqs_pmr6ZIMRAFp5C9GrxvxMYJnIs2wcvYmVkK2AuydFy8jFmwFavmoYMZkD2C7g2DVrGd3T4_6SqETRJkBvJQv_bnj_Vxw-wM5sEHcFT_wAbbJBh8tnBJjYqhPVCklIMPkOIqptaKwu38gDimwd8xa-g_uYR1bcpQuEZQM_qPGZ2Kzm_zAwq9xB2j2CMDbNXVu_JjEGe0wR45_kW8FV4CPFMEhg5w0rB5WdwvKGJp1sfCSNMcH-qJfKyEWM81sII8xyEchFqbOC733rme2KJfn4SYMfLjqFkPZ536Xai-HHb23FWE0IwEdtURh5hmDrT2UAvAs1d3QQaFyX3F4nBAJsyd0qIzQofa-uGzyun61DxLk9BZ_pVOl21K380ZYEQhpaeganzRS8pprxdvxW7OPlOm-OK2saTTqQlyPT1jKC8Sc5s494Bz4a1mOvpYgCRj048NHlDi8e2F31kE8BdtTs1bkL5NlNImSGhoQyJQVPUgxgf-1UR4TlvZu-UN8yqFyipl40po9Xd-NgSnuh8IPA1lKvm88clhEy9qy3EEYU0ow8AhKHcO9-EzGjHxM2jFdOwcY2_Ip-vgjaSk64X-UlPKFW8mZcZbPHK6KfopPNamZVwfAk2TY00fOfFmRZDTnnMxV72_BdB7LA59FFko_h55jTRdN7DzTjdjmmXv4oi_7VWxhCjX98y4O4YBsSvSeqTwdJkh3FimwbCaMZTiCM4dWQiJZY1wQ1JFh71z-kpzidnH1DmApAKcsnWzyGOz9cTjyWYR2gw1DdyoaXPqWa0GLUHxJoxPFxU83hGsMEpPovbCY-Y4EObYxcA2oMvwTckdjbZdqqLZCZacYlQ4HuxNWvo3Ga-kw0moePXKqEbJeWggC0A6PIT2kYQfx65XKSitymRV8lLj2cD9ySJktOXp8Ha3h_j5K_PbU78wRVMRxOwEDE5aeE_hzyL5mH3p935jah7LnSaA_hOOeawZwc1hIxTz3U9F3VmfY6k1tVZondL2LUz34BmL16GMp8hIu-K0oR0d7wgHubS1flPztVoI-3hxy-cykJ8cH3C7QWNVB7lxMaM2yRRdxb_4UuPMpEUx9Mwh4f2SQU2qjQi5obdWJnJiomzoNNSGX8oIvJcWQZtNmpdZwQq7wBj3U6O0qx-lXnQQCcd7lxbRxYQVJKG5gPYnNYsng_n5uaw-NIgocnB-CexLeIZTdwAJoBNUxCwwBmvzJ9rvQ_AV8WK7OmdPwubZ2PKtw9k9AroRb2hYa7AzwmUv0Fk3udfGvmN_jU4i-aG_x8LXeiUMt1b8LtJ-ItORsxJFpKQ9_okFHbFnEDQAFJYE1u7VdhO2qrKiTZjY2DTEbtTNrVC_x60aaU9yWnhJklSw',
-            // Tài khoản đăng nhập
+            // Tài khoản đăng nhập (giả lập)
             ADMIN_USER: 'admin000',
-            ADMIN_PASS: 'admin111admin'
+            ADMIN_PASS: 'admin111admin',
+            
+            // Giới hạn file (GitHub khuyến nghị < 50MB)
+            MAX_FILE_SIZE_MB: 50 
         };
 
         const { useState, useEffect, useRef } = React;
+        const GITHUB_API_URL = "https://api.github.com";
+
+        // --- Hàm API Helper cho GitHub ---
+        // Hàm này chịu trách nhiệm gọi API GitHub với Token
+        const githubApi = async (endpoint, options = {}) => {
+            const url = `${GITHUB_API_URL}/repos/${CONFIG.GITHUB_USERNAME}/${CONFIG.GITHUB_REPO}/contents${endpoint}`;
+            
+            const headers = {
+                'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'X-GitHub-Api-Version': '2022-11-28'
+            };
+
+            const response = await fetch(url, { ...options, headers });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Lỗi API GitHub:", errorData);
+                let message = errorData.message || "Lỗi không xác định";
+                if (response.status === 401) message = "Token không hợp lệ hoặc hết hạn";
+                if (response.status === 404) message = "Không tìm thấy kho chứa (Repo) hoặc file";
+                if (response.status === 422) message = "File đã tồn tại ở vị trí đó";
+                throw new Error(message);
+            }
+
+            if (options.method === 'DELETE' || response.status === 204) {
+                return; // Không có nội dung JSON
+            }
+            return response.json();
+        };
 
         // --- Component: Icon Helper ---
         const Icon = ({ name, size = 20, className = "", fill = "none" }) => {
-            const ref = useRef(null);
-            useEffect(() => {
-                if (ref.current) {
-                    const iconElement = document.createElement('i');
-                    iconElement.setAttribute('data-lucide', name);
-                    iconElement.setAttribute('width', size);
-                    iconElement.setAttribute('height', size);
-                    if (className) iconElement.setAttribute('class', className);
-                    if (fill !== "none") iconElement.setAttribute('fill', fill);
-                    
-                    ref.current.innerHTML = '';
-                    ref.current.appendChild(iconElement);
-                    lucide.createIcons({
-                        root: ref.current,
-                        nameAttr: 'data-lucide',
-                        attrs: { class: className, width: size, height: size, fill: fill }
-                    });
-                }
-            }, [name, size, className, fill]);
-            return <span ref={ref} className="inline-flex items-center justify-center" style={{ width: size, height: size }}></span>;
+            useEffect(() => { lucide.createIcons(); }, [name]);
+            return <i data-lucide={name} width={size} height={size} className={className} fill={fill}></i>;
         };
-
-        // --- Component: Loading ---
         const Loading = () => <div className="flex justify-center p-4"><div className="loader"></div></div>;
 
         // --- Component: File Thumbnail ---
-        const FileThumbnail = ({ dbx, file }) => {
-            const [thumbUrl, setThumbUrl] = useState(null);
-            const [isLoading, setIsLoading] = useState(true);
-
-            useEffect(() => {
-                let isMounted = true;
-                const fetchThumbnail = async () => {
-                    try {
-                        const response = await dbx.filesGetThumbnail({
-                            path: file.path_lower,
-                            format: 'jpeg',
-                            size: 'w640h480',
-                            mode: 'strict'
-                        });
-                        if (isMounted) {
-                            const url = URL.createObjectURL(response.result.fileBlob);
-                            setThumbUrl(url);
-                        }
-                    } catch (error) {
-                    } finally {
-                        if (isMounted) setIsLoading(false);
-                    }
-                };
-                fetchThumbnail();
-                return () => { isMounted = false; };
-            }, [file.id]);
-
-            if (isLoading) return <div className="w-full h-full bg-zinc-900 animate-pulse flex items-center justify-center"><div className="w-6 h-6 border-2 border-zinc-700 border-t-zinc-500 rounded-full animate-spin"></div></div>;
-            if (thumbUrl) return <img src={thumbUrl} alt={file.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />;
+        const FileThumbnail = ({ file }) => {
+            const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
+            
+            if (isImage) {
+                // Ảnh thì dùng link download trực tiếp
+                return <img src={file.download_url} alt={file.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />;
+            }
+            
+            // Video thì dùng placeholder
             return <div className="w-full h-full bg-zinc-900 flex flex-col items-center justify-center text-zinc-700 gap-2"><Icon name="film" size={32} /></div>;
         };
 
         // --- Main App ---
         const App = () => {
             const [view, setView] = useState('login');
-            const [dbx, setDbx] = useState(null);
             const [toast, setToast] = useState(null);
+            
+            // Kiểm tra config
+            const isConfigured = CONFIG.GITHUB_TOKEN !== 'ghp_...' && CONFIG.GITHUB_USERNAME !== 'ĐIỀN_USERNAME_CỦA_BẠN';
 
             const showToast = (msg, type = 'info') => {
                 setToast({ msg, type });
@@ -148,29 +117,33 @@
 
             const handleLogin = (user, pass) => {
                 if (user === CONFIG.ADMIN_USER && pass === CONFIG.ADMIN_PASS) {
-                    if (CONFIG.ACCESS_TOKEN.includes('HÃY_DÁN') || CONFIG.ACCESS_TOKEN === '') {
-                        alert('CẢNH BÁO: Bạn chưa điền Dropbox Token vào code HTML!');
+                    if (!isConfigured) {
+                        alert('CẢNH BÁO: Bạn chưa điền thông tin GitHub vào file HTML!');
                         return;
                     }
-                    try {
-                        const dbxInstance = new Dropbox.Dropbox({ accessToken: CONFIG.ACCESS_TOKEN });
-                        setDbx(dbxInstance);
-                        setView('dashboard');
-                    } catch (err) {
-                        alert('Lỗi khởi tạo Dropbox SDK');
-                    }
+                    setView('dashboard');
                 } else {
                     alert('Sai tài khoản hoặc mật khẩu!');
                 }
             };
+            
+            if (!isConfigured && view === 'login') {
+                 return <div className="flex items-center justify-center h-screen w-screen bg-black">
+                     <div className="p-8 rounded-lg bg-zinc-900 border border-red-500 max-w-md mx-4">
+                         <h2 className="text-xl font-bold text-red-400 mb-4">Chưa Cấu Hình!</h2>
+                         <p className="text-zinc-300">
+                             Bạn cần mở file `.html` này và điền thông tin `CONFIG` (Username, Repo, Token) theo hướng dẫn trong file `github_setup_guide.md` trước khi sử dụng.
+                         </p>
+                     </div>
+                 </div>
+            }
 
             return (
                 <div className="h-screen w-screen overflow-hidden flex flex-col relative bg-zinc-950 text-white">
                     {view === 'login' && <LoginScreen onLogin={handleLogin} />}
-                    {view === 'dashboard' && <Dashboard dbx={dbx} onLogout={() => setView('login')} showToast={showToast} />}
-                    
+                    {view === 'dashboard' && <Dashboard onLogout={() => setView('login')} showToast={showToast} />}
                     {toast && (
-                        <div className={`fixed bottom-4 right-4 z-[200] px-4 py-2 rounded shadow-lg text-sm font-medium animate-bounce ${toast.type === 'error' ? 'bg-red-900 text-red-200' : 'bg-zinc-800 text-white border border-zinc-700'}`}>
+                        <div className={`fixed bottom-4 right-4 z-[200] px-4 py-2 rounded shadow-lg text-sm font-medium ${toast.type === 'error' ? 'bg-red-900 text-red-200' : 'bg-zinc-800 border border-zinc-700'}`}>
                             {toast.msg}
                         </div>
                     )}
@@ -188,18 +161,15 @@
                 <div className="flex items-center justify-center h-full w-full bg-black bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-900 to-black">
                     <form onSubmit={submit} className="w-full max-w-sm p-8 bg-zinc-950/80 backdrop-blur rounded-2xl border border-zinc-800 shadow-2xl mx-4">
                         <div className="text-center mb-8">
-                            
+                            <div className="mx-auto bg-red-600/10 w-16 h-16 rounded-full flex items-center justify-center mb-4 border border-red-600/20">
+                                <Icon name="shield-alert" size={32} className="text-red-600" />
+                            </div>
+                            <h1 className="text-xl font-bold text-white tracking-wider">RESTRICTED AREA</h1>
                         </div>
                         <div className="space-y-4">
-                            <div>
-                               
-                                <input type="text" value={user} onChange={e => setUser(e.target.value)} className="input-dark w-full p-3 rounded-lg text-sm" placeholder="Enter username" />
-                            </div>
-                            <div>
-                          
-                                <input type="password" value={pass} onChange={e => setPass(e.target.value)} className="input-dark w-full p-3 rounded-lg text-sm" placeholder="Enter password" />
-                            </div>
-                            <button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-all mt-2">CANCEL</button>
+                            <div><label className="block text-xs text-zinc-500 mb-1 font-mono">USERNAME</label><input type="text" value={user} onChange={e => setUser(e.target.value)} className="input-dark w-full p-3 rounded-lg text-sm" placeholder="Enter username" /></div>
+                            <div><label className="block text-xs text-zinc-500 mb-1 font-mono">PASSWORD</label><input type="password" value={pass} onChange={e => setPass(e.target.value)} className="input-dark w-full p-3 rounded-lg text-sm" placeholder="Enter password" /></div>
+                            <button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-all mt-2">ACCESS SYSTEM</button>
                         </div>
                     </form>
                 </div>
@@ -207,309 +177,231 @@
         };
 
         // --- Dashboard ---
-        const Dashboard = ({ dbx, onLogout, showToast }) => {
+        const Dashboard = ({ onLogout, showToast }) => {
             const [files, setFiles] = useState([]);
             const [loading, setLoading] = useState(true);
-            const [uploading, setUploading] = useState(false);
+            const [uploading, setUploading] = useState(null);
             const [playing, setPlaying] = useState(null);
             const [search, setSearch] = useState('');
-            const [isTrashMode, setIsTrashMode] = useState(false); // TRASH MODE STATE
+            const [isTrashMode, setIsTrashMode] = useState(false);
             const fileInput = useRef(null);
-
-            // Toggle Trash Mode
-            const toggleTrash = () => {
-                setIsTrashMode(!isTrashMode);
-                setSearch(''); // Clear search when switching
-            };
 
             const refresh = async () => {
                 setLoading(true);
                 try {
-                    // Nếu ở chế độ Trash, lấy file từ thư mục /.trash, ngược lại lấy từ root (chuỗi rỗng)
-                    const path = isTrashMode ? '/.trash' : '';
-                    
-                    const res = await dbx.filesListFolder({ path: path });
-                    const mediaFiles = res.result.entries.filter(f => 
-                        f['.tag'] === 'file' && 
-                        /\.(mp4|mov|avi|mkv|webm|jpg|jpeg|png|gif|webp)$/i.test(f.name)
-                    );
-                    setFiles(mediaFiles.sort((a, b) => new Date(b.client_modified) - new Date(a.client_modified)));
+                    const path = isTrashMode ? '/.trash' : '/';
+                    const res = await githubApi(path);
+                    const mediaFiles = res.filter(f => f.type === 'file' && !f.name.startsWith('.')); // Bỏ qua file ẩn
+                    setFiles(mediaFiles);
                 } catch (e) {
-                    // Nếu lỗi là do thư mục trash chưa tồn tại, coi như thùng rác rỗng
-                    if (isTrashMode && e.error && JSON.stringify(e.error).includes('not_found')) {
-                         setFiles([]);
+                    if (e.message.includes("404")) { // Thư mục trash chưa tồn tại
+                        setFiles([]);
                     } else {
-                        console.error(e);
-                        showToast("Lỗi tải dữ liệu: " + (e.message || "Unknown"), "error");
+                        showToast("Lỗi tải data: " + e.message, "error");
                     }
                 } finally {
                     setLoading(false);
                 }
             };
 
-            // Gọi refresh mỗi khi chuyển chế độ
             useEffect(() => { refresh(); }, [isTrashMode]);
 
+            // Hàm chuyển file sang Base64
+            const fileToBase64 = (file) => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]); // Bỏ phần "data:..."
+                reader.onerror = error => reject(error);
+            });
+
+            // Xử lý Upload
             const handleUpload = async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-                setUploading(true);
+
+                // GIỚI HẠN KÍCH THƯỚC FILE
+                if (file.size > CONFIG.MAX_FILE_SIZE_MB * 1024 * 1024) {
+                    showToast(`Lỗi: File quá lớn (Giới hạn ${CONFIG.MAX_FILE_SIZE_MB}MB)`, "error");
+                    if (fileInput.current) fileInput.current.value = '';
+                    return;
+                }
+                
+                setUploading({ name: file.name, progress: 0 }); // Bắt đầu upload
+                
                 try {
-                    await dbx.filesUpload({ path: '/' + file.name, contents: file });
-                    showToast("Đã tải lên thành công!");
+                    const content = await fileToBase64(file);
+                    setUploading({ name: file.name, progress: 50 }); // Đã đọc xong file
+                    
+                    await githubApi(`/${file.name}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            message: `Upload file ${file.name}`,
+                            content: content
+                        })
+                    });
+                    
+                    showToast("Tải lên thành công!");
                     refresh();
                 } catch (e) {
                     showToast("Lỗi tải lên: " + e.message, "error");
                 } finally {
-                    setUploading(false);
+                    setUploading(null);
                     if (fileInput.current) fileInput.current.value = '';
                 }
             };
-
-            // LOGIC 1: Move to Trash (Soft Delete)
-            const moveToTrash = async (file) => {
-                if (!confirm("Chuyển vào thùng rác?")) return;
+            
+            // Hàm di chuyển file (cho Thùng rác)
+            const moveFile = async (file, fromPath, toPath) => {
                 try {
-                    // Thử di chuyển file vào /.trash/filename
-                    await dbx.filesMoveV2({
-                        from_path: file.path_lower,
-                        to_path: '/.trash/' + file.name
+                    // 1. Lấy nội dung file (GitHub API trả về base64)
+                    const fileData = await githubApi(`/${fromPath}/${file.name}`);
+                    if (!fileData.content) throw new Error("Không lấy được nội dung file");
+
+                    // 2. Upload file sang vị trí mới
+                    await githubApi(`/${toPath}/${file.name}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            message: `Move file ${file.name} to ${toPath}`,
+                            content: fileData.content.replace(/\n/g, '') // Xóa ký tự newline
+                        })
                     });
-                    showToast("Đã chuyển vào thùng rác");
-                    refresh();
+                    
+                    // 3. Xóa file ở vị trí cũ
+                    await githubApi(`/${fromPath}/${file.name}`, {
+                        method: 'DELETE',
+                        body: JSON.stringify({
+                            message: `Delete old file from ${fromPath}`,
+                            sha: file.sha // SHA là bắt buộc để xóa
+                        })
+                    });
+                    
                 } catch (e) {
-                    // Nếu lỗi do thư mục .trash chưa có, tạo nó rồi thử lại
-                    if (JSON.stringify(e).includes('not_found')) {
-                        try {
-                            await dbx.filesCreateFolderV2({ path: '/.trash' });
-                            // Retry move
-                            await dbx.filesMoveV2({
-                                from_path: file.path_lower,
-                                to_path: '/.trash/' + file.name
-                            });
-                            showToast("Đã tạo thùng rác và di chuyển file");
-                            refresh();
-                        } catch (err2) {
-                            showToast("Lỗi tạo thùng rác: " + err2.message, "error");
-                        }
+                    // Nếu lỗi do thư mục .trash chưa có, tạo nó
+                    if (toPath === '.trash' && e.message.includes("404")) {
+                        // Tạo file .gitkeep để tạo thư mục .trash
+                        await githubApi(`/.trash/.gitkeep`, {
+                            method: 'PUT',
+                            body: JSON.stringify({ message: "Init trash", content: "" })
+                        });
+                        // Thử lại
+                        await moveFile(file, fromPath, toPath);
                     } else {
-                        showToast("Lỗi xóa: " + e.message, "error");
+                        throw e;
                     }
                 }
             };
 
-            // LOGIC 2: Restore from Trash
+            const moveToTrash = async (file) => {
+                if (!confirm("Chuyển vào thùng rác?")) return;
+                setLoading(true);
+                try {
+                    await moveFile(file, '', '.trash');
+                    showToast("Đã chuyển vào thùng rác");
+                    refresh();
+                } catch (e) {
+                    showToast("Lỗi xóa: " + e.message, "error");
+                    setLoading(false);
+                }
+            };
+            
             const restoreFile = async (file) => {
                 if (!confirm("Khôi phục file này?")) return;
+                setLoading(true);
                 try {
-                    await dbx.filesMoveV2({
-                        from_path: file.path_lower,
-                        to_path: '/' + file.name // Move back to root
-                    });
+                    await moveFile(file, '.trash', '');
                     showToast("Đã khôi phục file");
                     refresh();
                 } catch (e) {
                     showToast("Lỗi khôi phục: " + e.message, "error");
-                }
-            };
-
-            // LOGIC 3: Permanent Delete
-            const permanentDelete = async (path) => {
-                if (!confirm("CẢNH BÁO: Hành động này không thể hoàn tác. Xóa vĩnh viễn?")) return;
-                try {
-                    await dbx.filesDeleteV2({ path });
-                    setFiles(prev => prev.filter(f => f.path_lower !== path));
-                    showToast("Đã xóa vĩnh viễn");
-                } catch (e) {
-                    showToast("Lỗi xóa vĩnh viễn", "error");
-                }
-            };
-
-            const handlePlay = async (file) => {
-                setLoading(true);
-                try {
-                    const link = await dbx.filesGetTemporaryLink({ path: file.path_lower });
-                    setPlaying({ ...file, url: link.result.link, isImage: /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name) });
-                } catch (e) {
-                    showToast("Không thể lấy link", "error");
-                } finally {
                     setLoading(false);
                 }
             };
 
+            const permanentDelete = async (file) => {
+                if (!confirm("CẢNH BÁO: Xóa vĩnh viễn?")) return;
+                setLoading(true);
+                try {
+                    await githubApi(`/.trash/${file.name}`, {
+                        method: 'DELETE',
+                        body: JSON.stringify({
+                            message: `Permanent delete ${file.name}`,
+                            sha: file.sha
+                        })
+                    });
+                    showToast("Đã xóa vĩnh viễn");
+                    refresh();
+                } catch (e) {
+                    showToast("Lỗi xóa: " + e.message, "error");
+                    setLoading(false);
+                }
+            };
+
+            const handlePlay = (file) => {
+                // Video cần link download có kèm token (GitHub tự động làm)
+                // Ảnh thì dùng link download
+                // download_url đã có sẵn token tạm thời
+                setPlaying(file);
+            };
+            
             const filtered = files.filter(f => f.name.toLowerCase().includes(search.toLowerCase()));
 
             return (
                 <div className="flex flex-col h-full w-full bg-zinc-950">
-                    {/* Navbar */}
-                    <nav className={`h-16 min-h-[4rem] border-b flex items-center justify-between px-4 sticky top-0 z-30 backdrop-blur transition-colors duration-300 ${isTrashMode ? 'bg-red-950/30 border-red-900' : 'bg-zinc-950/95 border-zinc-800'}`}>
-                        <div className="flex items-center gap-3 cursor-pointer" onClick={toggleTrash}>
-                            <div className={`p-2 rounded-lg transition-colors ${isTrashMode ? 'bg-red-600 text-white' : 'text-red-600'}`}>
-                                <Icon name={isTrashMode ? "trash-2" : "eye-off"} />
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="font-bold text-white text-sm sm:text-base">
-                                    {isTrashMode ? "THÙNG RÁC" : "VAULT"}
-                                </span>
-                                <span className="text-[10px] text-zinc-500 hidden sm:block">
-                                    {isTrashMode ? "Deleted Items" : "Secure Storage"}
-                                </span>
-                            </div>
+                    <nav className={`h-16 min-h-[4rem] border-b flex items-center justify-between px-4 sticky top-0 z-30 backdrop-blur ${isTrashMode ? 'bg-red-950/30 border-red-900' : 'bg-zinc-950/95 border-zinc-800'}`}>
+                        <div className="flex items-center gap-3 cursor-pointer" onClick={() => setIsTrashMode(!isTrashMode)}>
+                            <div className={`p-2 rounded-lg transition-colors ${isTrashMode ? 'bg-red-600 text-white' : 'text-red-600'}`}><Icon name={isTrashMode ? "trash-2" : "eye-off"} /></div>
+                            <div className="flex flex-col"><span className="font-bold text-white text-sm sm:text-base">{isTrashMode ? "THÙNG RÁC" : "VAULT"}</span></div>
                         </div>
-                        
-                        <div className="flex-1 max-w-md mx-4">
-                            <div className="relative group">
-                                <div className="absolute left-3 top-2.5 text-zinc-500"><Icon name="search" size={16}/></div>
-                                <input 
-                                    value={search}
-                                    onChange={e => setSearch(e.target.value)}
-                                    className={`w-full bg-zinc-900 border rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none transition-colors ${isTrashMode ? 'border-red-900/50 focus:border-red-500 placeholder-red-900/50' : 'border-zinc-800 focus:border-red-500'}`}
-                                    placeholder={isTrashMode ? "Tìm trong thùng rác..." : "Tìm kiếm..."}
-                                />
-                            </div>
-                        </div>
-
+                        <div className="flex-1 max-w-md mx-4"><input value={search} onChange={e => setSearch(e.target.value)} className={`w-full bg-zinc-900 border rounded-full py-2 px-4 text-sm focus:outline-none transition-colors ${isTrashMode ? 'border-red-900/50 focus:border-red-500' : 'border-zinc-800 focus:border-red-500'}`} placeholder="Tìm kiếm..."/></div>
                         <div className="flex items-center gap-2">
-                            {/* Nút chuyển đổi chế độ */}
-                            <button 
-                                onClick={toggleTrash}
-                                className={`p-2 rounded-full transition-all ${isTrashMode ? 'text-white bg-zinc-800 hover:bg-zinc-700' : 'text-zinc-400 hover:text-red-500 hover:bg-zinc-900'}`}
-                                title={isTrashMode ? "Quay lại" : "Thùng rác"}
-                            >
-                                <Icon name={isTrashMode ? "corner-up-left" : "trash-2"} size={20}/>
-                            </button>
-
-                            {/* Upload Button - Chỉ hiện khi KHÔNG PHẢI chế độ Trash */}
-                            {!isTrashMode && (
-                                <>
-                                    <input type="file" ref={fileInput} onChange={handleUpload} className="hidden" accept="video/*,image/*" />
-                                    <button disabled={uploading} onClick={() => fileInput.current.click()} className="bg-white text-black p-2 rounded-full transition-transform active:scale-95 hover:bg-zinc-200">
-                                        {uploading ? <div className="loader w-4 h-4 !border-black !border-t-transparent"></div> : <Icon name="upload-cloud" size={20}/>}
-                                    </button>
-                                </>
-                            )}
-                            
-                            <button onClick={onLogout} className="p-2 text-zinc-400 hover:text-red-500 ml-1">
-                                <Icon name="power" size={20}/>
-                            </button>
+                            <button onClick={() => setIsTrashMode(!isTrashMode)} className={`p-2 rounded-full transition-all ${isTrashMode ? 'text-white bg-zinc-800 hover:bg-zinc-700' : 'text-zinc-400 hover:text-red-500'}`} title={isTrashMode ? "Quay lại" : "Thùng rác"}><Icon name={isTrashMode ? "corner-up-left" : "trash-2"} size={20}/></button>
+                            {!isTrashMode && (<><input type="file" ref={fileInput} onChange={handleUpload} className="hidden" accept="video/*,image/*" /><button disabled={!!uploading} onClick={() => fileInput.current.click()} className="bg-white text-black p-2 rounded-full transition-transform active:scale-95 hover:bg-zinc-200">{uploading ? <div className="loader w-4 h-4 !border-black !border-t-transparent"></div> : <Icon name="upload-cloud" size={20}/>}</button></>)}
+                            <button onClick={onLogout} className="p-2 text-zinc-400 hover:text-red-500 ml-1"><Icon name="power" size={20}/></button>
                         </div>
                     </nav>
-
-                    {/* Content Grid */}
+                    {uploading && (<div className="relative h-2 w-full bg-zinc-800"><div className="absolute h-full bg-blue-600 transition-all" style={{ width: `${uploading.progress}%` }}></div><span className="absolute text-xs text-white left-2 top-2 z-10">{uploading.name} ({(uploading.progress)}%)</span></div>)}
                     <main className="flex-1 p-4 overflow-y-auto relative">
-                        {isTrashMode && (
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-900 via-red-600 to-red-900 opacity-50"></div>
-                        )}
-                        
-                        {loading && !playing ? (
-                            <div className="flex flex-col items-center justify-center h-64 text-zinc-500"><Loading /><p className="text-xs animate-pulse mt-2">LOADING...</p></div>
-                        ) : (
-                            <>
-                                {filtered.length === 0 && (
-                                    <div className="flex flex-col items-center justify-center h-64 text-zinc-600">
-                                        <Icon name={isTrashMode ? "trash" : "ghost"} size={48} className="mb-2 opacity-20"/>
-                                        <p className="text-sm opacity-50">{isTrashMode ? "Thùng rác trống" : "Không có dữ liệu"}</p>
-                                    </div>
-                                )}
+                        {loading && !playing ? (<div className="flex flex-col items-center justify-center h-64 text-zinc-500"><Loading /><p className="text-xs animate-pulse mt-2">LOADING...</p></div>) : (<>
+                                {filtered.length === 0 && (<div className="flex flex-col items-center justify-center h-64 text-zinc-600"><Icon name={isTrashMode ? "trash" : "ghost"} size={48} className="mb-2 opacity-20"/><p className="text-sm opacity-50">{isTrashMode ? "Thùng rác trống" : "Không có dữ liệu"}</p></div>)}
                                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                     {filtered.map(file => (
-                                        <div key={file.id} className={`group bg-zinc-900 border rounded-lg overflow-hidden relative transition-all hover:shadow-lg ${isTrashMode ? 'border-red-900/30 hover:border-red-500/50' : 'border-zinc-800 hover:border-zinc-600'}`}>
+                                        <div key={file.sha} className={`group bg-zinc-900 border rounded-lg overflow-hidden relative transition-all ${isTrashMode ? 'border-red-900/30 hover:border-red-500/50' : 'border-zinc-800 hover:border-zinc-600'}`}>
                                             <div onClick={() => handlePlay(file)} className="aspect-square sm:aspect-video bg-black flex items-center justify-center cursor-pointer relative overflow-hidden">
-                                                
-                                                {/* THUMBNAIL COMPONENT */}
-                                                <FileThumbnail dbx={dbx} file={file} />
-
-                                                {/* Overlays */}
+                                                <FileThumbnail file={file} />
                                                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-all flex items-center justify-center">
-                                                    <div className="bg-black/50 backdrop-blur-sm p-3 rounded-full group-hover:scale-110 transition-transform duration-300 border border-white/10">
-                                                        <Icon name={/\.(jpg|png|gif)$/i.test(file.name) ? "image" : "play"} className="text-white" size={24} fill="white" />
-                                                    </div>
+                                                    <div className="bg-black/50 backdrop-blur-sm p-3 rounded-full group-hover:scale-110 transition-transform duration-300 border border-white/10"><Icon name={/\.(jpg|png|gif)$/i.test(file.name) ? "image" : "play"} className="text-white" size={24} fill="white" /></div>
                                                 </div>
-                                                
-                                                {isTrashMode && (
-                                                    <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">
-                                                        DELETED
-                                                    </div>
-                                                )}
-
-                                                <div className="absolute bottom-2 right-2 bg-black/80 backdrop-blur text-[10px] text-zinc-300 px-1.5 py-0.5 rounded font-mono border border-white/10">
-                                                    {(file.size / (1024*1024)).toFixed(1)}MB
-                                                </div>
+                                                {isTrashMode && (<div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">DELETED</div>)}
+                                                <div className="absolute bottom-2 right-2 bg-black/80 backdrop-blur text-[10px] text-zinc-300 px-1.5 py-0.5 rounded font-mono border border-white/10">{(file.size / (1024*1024)).toFixed(1)}MB</div>
                                             </div>
-                                            
                                             <div className="p-3 bg-zinc-900/95 backdrop-blur">
                                                 <div className="flex flex-col gap-2">
                                                     <h3 className="text-xs font-medium text-zinc-300 truncate w-full" title={file.name}>{file.name}</h3>
-                                                    
                                                     <div className="flex justify-end items-center gap-2 pt-1 border-t border-zinc-800 mt-1">
-                                                        {isTrashMode ? (
-                                                            // ACTIONS TRONG THÙNG RÁC
-                                                            <>
-                                                                <button 
-                                                                    onClick={(e) => {e.stopPropagation(); restoreFile(file)}} 
-                                                                    className="text-green-500 hover:text-green-400 text-[10px] uppercase font-bold flex items-center gap-1 px-2 py-1 bg-green-900/20 rounded hover:bg-green-900/40 transition-colors"
-                                                                >
-                                                                    <Icon name="rotate-ccw" size={12} /> Restore
-                                                                </button>
-                                                                <button 
-                                                                    onClick={(e) => {e.stopPropagation(); permanentDelete(file.path_lower)}} 
-                                                                    className="text-red-500 hover:text-red-400 p-1 bg-red-900/10 rounded hover:bg-red-900/30"
-                                                                    title="Xóa vĩnh viễn"
-                                                                >
-                                                                    <Icon name="trash-2" size={14} />
-                                                                </button>
-                                                            </>
-                                                        ) : (
-                                                            // ACTIONS BÌNH THƯỜNG
-                                                            <button 
-                                                                onClick={(e) => {e.stopPropagation(); moveToTrash(file)}} 
-                                                                className="text-zinc-500 hover:text-red-500 flex items-center gap-1 text-[10px] hover:bg-zinc-800 px-2 py-1 rounded transition-colors ml-auto"
-                                                            >
-                                                                <Icon name="trash" size={12} /> Delete
-                                                            </button>
+                                                        {isTrashMode ? (<>
+                                                                <button onClick={(e) => {e.stopPropagation(); restoreFile(file)}} className="text-green-500 hover:text-green-400 text-[10px] uppercase font-bold flex items-center gap-1 px-2 py-1 bg-green-900/20 rounded hover:bg-green-900/40 transition-colors"><Icon name="rotate-ccw" size={12} /> Restore</button>
+                                                                <button onClick={(e) => {e.stopPropagation(); permanentDelete(file)}} className="text-red-500 hover:text-red-400 p-1 bg-red-900/10 rounded hover:bg-red-900/30" title="Xóa vĩnh viễn"><Icon name="trash-2" size={14} /></button>
+                                                            </>) : (
+                                                            <button onClick={(e) => {e.stopPropagation(); moveToTrash(file)}} className="text-zinc-500 hover:text-red-500 flex items-center gap-1 text-[10px] hover:bg-zinc-800 px-2 py-1 rounded transition-colors ml-auto"><Icon name="trash" size={12} /> Delete</button>
                                                         )}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     ))}
-                                </div>
-                            </>
-                        )}
+                                </div></>)}
                     </main>
-
-                    {/* Player/Viewer Overlay */}
                     {playing && (
                         <div className="fixed inset-0 z-[100] bg-black flex flex-col animate-in fade-in duration-200">
                             <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-start z-20 bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
-                                <h3 className="text-sm font-mono text-white/80 truncate max-w-[70%] drop-shadow-md pointer-events-auto bg-black/20 backdrop-blur px-2 py-1 rounded">
-                                    {playing.name} {isTrashMode && <span className="text-red-500 font-bold ml-2">[PREVIEW ONLY]</span>}
-                                </h3>
-                                <button 
-                                    onClick={() => setPlaying(null)} 
-                                    className="pointer-events-auto bg-red-600/90 hover:bg-red-600 text-white p-2 rounded-full shadow-lg backdrop-blur transition-transform active:scale-95 flex items-center justify-center"
-                                >
-                                    <Icon name="x" size={24}/>
-                                </button>
+                                <h3 className="text-sm font-mono text-white/80 truncate max-w-[70%] drop-shadow-md pointer-events-auto bg-black/20 backdrop-blur px-2 py-1 rounded">{playing.name}</h3>
+                                <button onClick={() => setPlaying(null)} className="pointer-events-auto bg-red-600/90 hover:bg-red-600 text-white p-2 rounded-full shadow-lg backdrop-blur transition-transform active:scale-95 flex items-center justify-center"><Icon name="x" size={24}/></button>
                             </div>
-
                             <div className="flex-1 w-full h-full flex items-center justify-center bg-black relative">
-                                {playing.isImage ? (
-                                    <img 
-                                        src={playing.url} 
-                                        className="max-w-full max-h-full object-contain" 
-                                        alt="Preview"
-                                    />
+                                {/\.(jpg|jpeg|png|gif|webp)$/i.test(playing.name) ? (
+                                    <img src={playing.download_url} className="max-w-full max-h-full object-contain" alt="Preview"/>
                                 ) : (
-                                    <video 
-                                        controls 
-                                        autoPlay 
-                                        playsInline
-                                        src={playing.url} 
-                                        className="max-w-full max-h-full w-auto h-auto object-contain outline-none"
-                                        style={{ maxHeight: '100vh', width: '100%' }} 
-                                    >
-                                    </video>
+                                    <video controls autoPlay playsInline src={playing.download_url} className="max-w-full max-h-full w-auto h-auto object-contain outline-none" style={{ maxHeight: '100vh', width: '100%' }}></video>
                                 )}
                             </div>
                         </div>
